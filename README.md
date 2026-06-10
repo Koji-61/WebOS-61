@@ -5,8 +5,6 @@ A macOS-inspired operating system inside a browser tab.
 WebOS-61 turns a GitHub profile into an interactive desktop with draggable windows,
 a custom terminal, a macOS-style Finder, and a Chrome-like browser with real web search.
 
-![WebOS-61 desktop preview](assets/webos-desktop-preview.jpg)
-
 ## Features
 
 - macOS-style menu bar, dock, glass windows, and desktop icons
@@ -38,3 +36,7 @@ python3 -m http.server 5173
 ```
 
 Then visit `http://localhost:5173`.
+
+## Preview
+
+![WebOS-61 desktop preview](assets/webos-desktop-preview.jpg)
