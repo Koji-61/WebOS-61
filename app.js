@@ -70,9 +70,18 @@ const chromeExternalLink = document.querySelector("#chrome-external-link");
 const chromeBack = document.querySelector("#chrome-back");
 const chromeForward = document.querySelector("#chrome-forward");
 const chromeReload = document.querySelector("#chrome-reload");
-const chromeHomeSubmit = document.querySelector("#chrome-home-submit");
+const chromeHomeTemplate = chromePage.innerHTML;
 let chromeHistory = [];
 let chromeHistoryIndex = -1;
+let chromeLoadTimer = null;
+
+const frameBlockedHosts = [
+  "youtube.com",
+  "www.youtube.com",
+  "youtu.be",
+  "accounts.google.com",
+  "github.com"
+];
 
 function setClock() {
   const now = new Date();
@@ -101,6 +110,9 @@ function focusWindow(app) {
 function closeWindow(app) {
   const win = document.querySelector(`[data-app="${app}"]`);
   if (!win) return;
+  if (app === "chrome") {
+    resetChrome();
+  }
   win.classList.remove("open", "active", "focused", "minimized", "maximized");
   updateFullscreenState();
   updateDockState();
@@ -259,18 +271,56 @@ function getChromeTarget(query) {
   return { value, url };
 }
 
+function getHostname(url) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return "";
+  }
+}
+
+function escapeHtml(value) {
+  return value.replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#039;"
+  })[char]);
+}
+
+function isKnownFrameBlocked(url) {
+  const host = getHostname(url);
+  return frameBlockedHosts.some((blockedHost) => host === blockedHost.replace(/^www\./, "") || host.endsWith(`.${blockedHost.replace(/^www\./, "")}`));
+}
+
 function updateChromeButtons() {
   chromeBack.disabled = chromeHistoryIndex <= 0;
   chromeForward.disabled = chromeHistoryIndex >= chromeHistory.length - 1;
 }
 
 function loadChromeUrl(url, label = url, pushHistory = true) {
+  clearTimeout(chromeLoadTimer);
+  if (isKnownFrameBlocked(url)) {
+    showChromeBlocked(url, label);
+    if (pushHistory) {
+      chromeHistory = chromeHistory.slice(0, chromeHistoryIndex + 1);
+      chromeHistory.push({ url, label });
+      chromeHistoryIndex = chromeHistory.length - 1;
+    }
+    updateChromeButtons();
+    return;
+  }
+
   chromePage.hidden = true;
   chromeWebview.hidden = false;
   chromeInput.value = label;
   chromeStatusText.textContent = `Loading ${label}`;
   chromeExternalLink.href = url;
   chromeFrame.src = url;
+  chromeLoadTimer = setTimeout(() => {
+    chromeStatusText.textContent = "Still loading. This site may block embedded browsers.";
+  }, 5000);
 
   if (pushHistory) {
     chromeHistory = chromeHistory.slice(0, chromeHistoryIndex + 1);
@@ -287,6 +337,7 @@ function runChromeSearch(query) {
 }
 
 chromeFrame.addEventListener("load", () => {
+  clearTimeout(chromeLoadTimer);
   chromeStatusText.textContent = "Loaded";
 });
 
@@ -311,11 +362,42 @@ chromeReload.addEventListener("click", () => {
 });
 
 function showChromeHome() {
+  clearTimeout(chromeLoadTimer);
   chromeWebview.hidden = true;
   chromePage.hidden = false;
+  chromePage.innerHTML = chromeHomeTemplate;
   chromeInput.value = "";
-  chromeHomeInput.value = "";
+  document.querySelector("#chrome-home-input").value = "";
+  chromeFrame.removeAttribute("src");
   chromeStatusText.textContent = "Ready";
+  bindChromeHomeEvents();
+}
+
+function resetChrome() {
+  chromeHistory = [];
+  chromeHistoryIndex = -1;
+  showChromeHome();
+  updateChromeButtons();
+}
+
+function showChromeBlocked(url, label) {
+  clearTimeout(chromeLoadTimer);
+  chromeWebview.hidden = true;
+  chromePage.hidden = false;
+  chromeInput.value = label;
+  chromeHomeInput.value = "";
+  chromeFrame.removeAttribute("src");
+  chromePage.innerHTML = `
+    <div class="blocked-page">
+      <div class="chrome-icon app-icon-large"></div>
+      <p class="eyebrow">Web security</p>
+      <h2>${escapeHtml(label)}</h2>
+      <p>This site does not allow itself to run inside another website. Real Chrome has browser privileges that a website cannot copy.</p>
+      <a href="${url}" target="_blank" rel="noreferrer">Open in real browser tab</a>
+      <button type="button" id="chrome-home-reset">Back to WebOS search</button>
+    </div>
+  `;
+  document.querySelector("#chrome-home-reset").addEventListener("click", resetChrome);
 }
 
 document.querySelector(".chrome-bar button[aria-label='Reload']").addEventListener("dblclick", showChromeHome);
@@ -336,6 +418,33 @@ document.querySelector("#chrome-form").addEventListener("submit", (event) => {
   runChromeSearch(chromeInput.value);
 });
 
+function bindChromeHomeEvents() {
+  const homeForm = document.querySelector("#chrome-home-form");
+  const homeInput = document.querySelector("#chrome-home-input");
+  const homeSubmit = document.querySelector("#chrome-home-submit");
+
+  homeForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    runChromeSearch(homeInput.value);
+  });
+
+  homeInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      runChromeSearch(homeInput.value);
+    }
+  });
+
+  homeSubmit.addEventListener("click", (event) => {
+    event.preventDefault();
+    runChromeSearch(homeInput.value);
+  });
+
+  document.querySelectorAll("[data-search]").forEach((button) => {
+    button.addEventListener("click", () => runChromeSearch(button.dataset.search));
+  });
+}
+
 document.querySelector("#chrome-home-form").addEventListener("submit", (event) => {
   event.preventDefault();
   runChromeSearch(chromeHomeInput.value);
@@ -353,11 +462,6 @@ chromeHomeInput.addEventListener("keydown", (event) => {
     event.preventDefault();
     runChromeSearch(chromeHomeInput.value);
   }
-});
-
-chromeHomeSubmit.addEventListener("click", (event) => {
-  event.preventDefault();
-  runChromeSearch(chromeHomeInput.value);
 });
 
 document.querySelectorAll("[data-search]").forEach((button) => {
