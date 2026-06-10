@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebOS-61</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="desktop" id="desktop" aria-label="WebOS-61 desktop">
+      <div class="aurora aurora-one"></div>
+      <div class="aurora aurora-two"></div>
+      <div class="aurora aurora-three"></div>
+
+      <header class="menu-bar">
+        <div class="menu-left">
+          <button class="apple-dot" data-open-app="about" aria-label="Open about">61</button>
+          <strong>WebOS-61</strong>
+          <span>Finder</span>
+          <span>Terminal</span>
+          <span>Chrome</span>
+        </div>
+        <div class="menu-right">
+          <span id="network">GitHub Connected</span>
+          <span id="clock">--:--</span>
+        </div>
+      </header>
+
+      <button class="desktop-icon" data-open-app="finder" style="--x: 32px; --y: 116px">
+        <span class="icon-tile finder-icon"></span>
+        <span>Finder</span>
+      </button>
+      <button class="desktop-icon" data-open-app="terminal" style="--x: 32px; --y: 222px">
+        <span class="icon-tile terminal-icon"></span>
+        <span>Terminal</span>
+      </button>
+      <button class="desktop-icon" data-open-app="chrome" style="--x: 32px; --y: 328px">
+        <span class="icon-tile chrome-icon"></span>
+        <span>Chrome</span>
+      </button>
+
+      <section class="window" id="window-terminal" data-app="terminal" style="--left: 27vw; --top: 168px; --width: 720px; --height: 430px">
+        <div class="window-chrome">
+          <div class="traffic">
+            <button class="traffic-dot close" data-close="terminal" aria-label="Close terminal"></button>
+            <button class="traffic-dot minimize" aria-label="Minimize terminal"></button>
+            <button class="traffic-dot maximize" aria-label="Maximize terminal"></button>
+          </div>
+          <strong>Terminal</strong>
+          <span>koji@webos</span>
+        </div>
+        <div class="window-body terminal-body">
+          <div id="terminal-output" class="terminal-output" aria-live="polite"></div>
+          <form id="terminal-form" class="terminal-line">
+            <span>koji@WebOS-61 %</span>
+            <input id="terminal-input" autocomplete="off" spellcheck="false" aria-label="Terminal input" />
+          </form>
+        </div>
+      </section>
+
+      <section class="window" id="window-finder" data-app="finder" style="--left: 18vw; --top: 104px; --width: 860px; --height: 540px">
+        <div class="window-chrome">
+          <div class="traffic">
+            <button class="traffic-dot close" data-close="finder" aria-label="Close finder"></button>
+            <button class="traffic-dot minimize" aria-label="Minimize finder"></button>
+            <button class="traffic-dot maximize" aria-label="Maximize finder"></button>
+          </div>
+          <strong>Finder</strong>
+          <span id="finder-path">/Users/koji/Desktop</span>
+        </div>
+        <div class="window-body finder-layout">
+          <aside class="finder-sidebar">
+            <p>Favorites</p>
+            <button class="finder-place active" data-folder="desktop">Desktop</button>
+            <button class="finder-place" data-folder="downloads">Downloads</button>
+            <button class="finder-place" data-folder="applications">Programme</button>
+            <button class="finder-place" data-folder="documents">Dokumente</button>
+            <button class="finder-place" data-folder="pictures">Bilder</button>
+          </aside>
+          <section class="finder-main">
+            <div class="finder-toolbar">
+              <div>
+                <strong id="finder-title">Desktop</strong>
+                <span id="finder-count">4 items</span>
+              </div>
+              <div class="finder-view-dots"><span></span><span></span><span></span></div>
+            </div>
+            <div class="finder-grid" id="finder-grid"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="window" id="window-chrome" data-app="chrome" style="--left: 20vw; --top: 92px; --width: 900px; --height: 560px">
+        <div class="window-chrome">
+          <div class="traffic">
+            <button class="traffic-dot close" data-close="chrome" aria-label="Close chrome"></button>
+            <button class="traffic-dot minimize" aria-label="Minimize chrome"></button>
+            <button class="traffic-dot maximize" aria-label="Maximize chrome"></button>
+          </div>
+          <strong>Chrome</strong>
+          <span>Search</span>
+        </div>
+        <div class="window-body chrome-body">
+          <form class="chrome-bar" id="chrome-form">
+            <button type="button" id="chrome-back" aria-label="Back">‹</button>
+            <button type="button" id="chrome-forward" aria-label="Forward">›</button>
+            <button type="button" id="chrome-reload" aria-label="Reload">↻</button>
+            <input id="chrome-input" aria-label="Chrome address bar" placeholder="Search WebOS or enter a URL" autocomplete="off" />
+          </form>
+          <section class="chrome-page" id="chrome-page">
+            <div class="google-mark">
+              <span>W</span><span>e</span><span>b</span><span>O</span><span>S</span>
+            </div>
+            <form class="search-card" id="chrome-home-form">
+              <input id="chrome-home-input" aria-label="Chrome home search" placeholder="Search the web" autocomplete="off" />
+              <button type="submit" id="chrome-home-submit">Search</button>
+            </form>
+            <div class="quick-links">
+              <button data-search="github Koji-61">GitHub</button>
+              <button data-search="javascript window manager">Window Manager</button>
+              <button data-search="macOS finder design">Finder UI</button>
+            </div>
+          </section>
+          <section class="chrome-webview" id="chrome-webview" hidden>
+            <div class="chrome-status">
+              <span id="chrome-status-text">Loading...</span>
+              <a id="chrome-external-link" href="https://www.google.com" target="_blank" rel="noreferrer">Open in new tab</a>
+            </div>
+            <iframe id="chrome-frame" title="Chrome webview" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </section>
+        </div>
+      </section>
+
+      <section class="window" id="window-about" data-app="about" style="--left: 30vw; --top: 126px; --width: 640px; --height: 410px">
+        <div class="window-chrome">
+          <div class="traffic">
+            <button class="traffic-dot close" data-close="about" aria-label="Close about"></button>
+            <button class="traffic-dot minimize" aria-label="Minimize about"></button>
+            <button class="traffic-dot maximize" aria-label="Maximize about"></button>
+          </div>
+          <strong>About</strong>
+          <span>profile.md</span>
+        </div>
+        <div class="window-body about-body">
+          <p class="eyebrow">Built by Koji-61</p>
+          <h2>Not a portfolio. A tiny product.</h2>
+          <p>
+            WebOS-61 turns a GitHub profile into an interactive desktop where every project can
+            explain itself through windows, terminal commands, code snippets, and short demos.
+          </p>
+          <div class="stats-row">
+            <span><strong>4</strong> Apps</span>
+            <span><strong>12</strong> Commands</span>
+            <span><strong>0</strong> Frameworks</span>
+          </div>
+        </div>
+      </section>
+
+      <nav class="dock" aria-label="Dock">
+        <button data-open-app="finder" aria-label="Open Finder"><span class="dock-icon finder-icon"></span></button>
+        <button data-open-app="terminal" aria-label="Open Terminal"><span class="dock-icon terminal-icon"></span></button>
+        <button data-open-app="chrome" aria-label="Open Chrome"><span class="dock-icon chrome-icon"></span></button>
+        <button data-open-app="about" aria-label="Open About"><span class="dock-icon about-icon"></span></button>
+        <a href="https://github.com/Koji-61/WebOS-61" target="_blank" rel="noreferrer" aria-label="Open GitHub repository"><span class="dock-icon github-icon"></span></a>
+      </nav>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
