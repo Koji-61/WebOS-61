@@ -39,4 +39,14 @@ Then visit `http://localhost:5173`.
 
 ## Preview
 
-![WebOS-61 desktop preview](assets/webos-desktop-preview.jpg)
+<p align="center">
+  <img
+    src="assets/webos-desktop-preview.jpg"
+    alt="WebOS-61 desktop preview"
+    width="820"
+  />
+</p>
+
+<p align="center">
+  <sub>Clean macOS-style desktop with Finder, Terminal, Chrome, menu bar, and dock.</sub>
+</p>
