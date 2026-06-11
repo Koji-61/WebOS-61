@@ -56,6 +56,8 @@ let dragState = null;
 const terminalOutput = document.querySelector("#terminal-output");
 const terminalInput = document.querySelector("#terminal-input");
 const terminalForm = document.querySelector("#terminal-form");
+const desktopItems = document.querySelector("#desktop-items");
+const contextMenu = document.querySelector("#desktop-context-menu");
 const finderGrid = document.querySelector("#finder-grid");
 const finderTitle = document.querySelector("#finder-title");
 const finderCount = document.querySelector("#finder-count");
@@ -74,6 +76,8 @@ const chromeHomeTemplate = chromePage.innerHTML;
 let chromeHistory = [];
 let chromeHistoryIndex = -1;
 let chromeLoadTimer = null;
+let folderCount = 0;
+let contextPoint = { x: 140, y: 140 };
 
 const frameBlockedHosts = [
   "youtube.com",
@@ -110,6 +114,8 @@ function focusWindow(app) {
 function closeWindow(app) {
   const win = document.querySelector(`[data-app="${app}"]`);
   if (!win) return;
+  win.classList.remove("maximized");
+  ["top", "left", "height"].forEach((property) => win.style.removeProperty(property));
   if (app === "chrome") {
     resetChrome();
   }
@@ -132,6 +138,53 @@ function toggleMaximize(win) {
   focusWindow(win.dataset.app);
   updateFullscreenState();
 }
+
+function hideContextMenu() {
+  contextMenu.hidden = true;
+}
+
+function showContextMenu(event) {
+  if (event.target.closest(".window, .dock, .menu-bar, .context-menu")) return;
+  event.preventDefault();
+  contextPoint = { x: event.clientX, y: event.clientY };
+  contextMenu.hidden = false;
+  const rect = contextMenu.getBoundingClientRect();
+  contextMenu.style.left = `${Math.min(event.clientX, window.innerWidth - rect.width - 12)}px`;
+  contextMenu.style.top = `${Math.min(event.clientY, window.innerHeight - rect.height - 12)}px`;
+}
+
+function createDesktopFolder() {
+  folderCount += 1;
+  const folder = document.createElement("button");
+  folder.className = "desktop-icon desktop-folder-icon";
+  folder.style.setProperty("--x", `${Math.max(18, contextPoint.x - 42)}px`);
+  folder.style.setProperty("--y", `${Math.max(44, contextPoint.y - 34)}px`);
+  folder.innerHTML = `<span class="icon-tile"></span><span>New Folder ${folderCount}</span>`;
+  desktopItems.append(folder);
+}
+
+function setWallpaper(theme) {
+  desktop.classList.remove("wallpaper-midnight", "wallpaper-sunrise");
+  if (theme !== "aurora") {
+    desktop.classList.add(`wallpaper-${theme}`);
+  }
+}
+
+desktop.addEventListener("contextmenu", showContextMenu);
+
+document.addEventListener("click", (event) => {
+  if (!event.target.closest(".context-menu")) hideContextMenu();
+});
+
+contextMenu.addEventListener("click", (event) => {
+  const action = event.target.dataset.contextAction;
+  if (!action) return;
+  if (action === "new-folder") createDesktopFolder();
+  if (action === "wallpaper-aurora") setWallpaper("aurora");
+  if (action === "wallpaper-midnight") setWallpaper("midnight");
+  if (action === "wallpaper-sunrise") setWallpaper("sunrise");
+  hideContextMenu();
+});
 
 function updateDockState() {
   document.querySelectorAll(".dock [data-open-app]").forEach((button) => {
@@ -271,6 +324,10 @@ function getChromeTarget(query) {
   return { value, url };
 }
 
+function isYouTubeSearch(query) {
+  return /\byoutube\b|youtu\.be/i.test(query.trim());
+}
+
 function getHostname(url) {
   try {
     return new URL(url).hostname.replace(/^www\./, "");
@@ -333,6 +390,10 @@ function loadChromeUrl(url, label = url, pushHistory = true) {
 function runChromeSearch(query) {
   const target = getChromeTarget(query);
   if (!target) return;
+  if (!target.value.includes(".") && isYouTubeSearch(target.value)) {
+    loadChromeUrl("https://www.youtube.com", "youtube.com");
+    return;
+  }
   loadChromeUrl(target.url, target.value);
 }
 
@@ -392,7 +453,7 @@ function showChromeBlocked(url, label) {
       <div class="chrome-icon app-icon-large"></div>
       <p class="eyebrow">Web security</p>
       <h2>${escapeHtml(label)}</h2>
-      <p>This site does not allow itself to run inside another website. Real Chrome has browser privileges that a website cannot copy.</p>
+      <p>This site blocks being opened inside another website. YouTube and some login-heavy sites do this on purpose, even though normal Google search can still be shown here.</p>
       <a href="${url}" target="_blank" rel="noreferrer">Open in real browser tab</a>
       <button type="button" id="chrome-home-reset">Back to WebOS search</button>
     </div>

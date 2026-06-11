@@ -47,6 +47,20 @@ button {
     linear-gradient(135deg, #101a31 0%, #0b1424 36%, #172c43 100%);
 }
 
+.desktop.wallpaper-midnight {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(80, 132, 255, 0.36), transparent 28%),
+    radial-gradient(circle at 78% 70%, rgba(45, 212, 191, 0.22), transparent 26%),
+    linear-gradient(135deg, #050816 0%, #111827 48%, #020617 100%);
+}
+
+.desktop.wallpaper-sunrise {
+  background:
+    radial-gradient(circle at 24% 18%, rgba(255, 214, 102, 0.46), transparent 24%),
+    radial-gradient(circle at 78% 30%, rgba(255, 111, 145, 0.42), transparent 28%),
+    linear-gradient(135deg, #123047 0%, #1e3a5f 42%, #6d385f 100%);
+}
+
 .desktop::before {
   content: "";
   position: absolute;
@@ -150,6 +164,11 @@ button {
   background: transparent;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
   cursor: pointer;
+}
+
+.desktop-folder-icon .icon-tile {
+  background: linear-gradient(135deg, #7dd3fc, #2563eb);
+  border-radius: 10px 18px 18px 18px;
 }
 
 .desktop-icon span:last-child {
@@ -918,6 +937,38 @@ button {
   height: 5px;
   border-radius: 50%;
   background: rgba(255,255,255,0.82);
+}
+
+.context-menu {
+  position: fixed;
+  z-index: 300;
+  min-width: 210px;
+  margin: 0;
+  padding: 7px;
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: 12px;
+  background: rgba(20, 28, 42, 0.82);
+  box-shadow: 0 24px 70px rgba(0,0,0,0.42);
+  backdrop-filter: blur(26px) saturate(170%);
+}
+
+.context-menu[hidden] {
+  display: none;
+}
+
+.context-menu button {
+  width: 100%;
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: transparent;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.context-menu button:hover {
+  background: rgba(255,255,255,0.14);
 }
 
 .dock button:hover,

@@ -24,11 +24,12 @@
           <span>Chrome</span>
         </div>
         <div class="menu-right">
-          <span id="network">GitHub Connected</span>
+          <span id="system-status">WebOS</span>
           <span id="clock">--:--</span>
         </div>
       </header>
 
+      <div class="desktop-items" id="desktop-items">
       <button class="desktop-icon" data-open-app="finder" style="--x: 32px; --y: 116px">
         <span class="icon-tile finder-icon"></span>
         <span>Finder</span>
@@ -41,6 +42,7 @@
         <span class="icon-tile chrome-icon"></span>
         <span>Chrome</span>
       </button>
+      </div>
 
       <section class="window" id="window-terminal" data-app="terminal" style="--left: 27vw; --top: 168px; --width: 720px; --height: 430px">
         <div class="window-chrome">
@@ -120,6 +122,7 @@
             </form>
             <div class="quick-links">
               <button data-search="github Koji-61">GitHub</button>
+              <button data-search="youtube">YouTube</button>
               <button data-search="javascript window manager">Window Manager</button>
               <button data-search="macOS finder design">Finder UI</button>
             </div>
@@ -166,6 +169,13 @@
         <button data-open-app="about" aria-label="Open About"><span class="dock-icon about-icon"></span></button>
         <a href="https://github.com/Koji-61/WebOS-61" target="_blank" rel="noreferrer" aria-label="Open GitHub repository"><span class="dock-icon github-icon"></span></a>
       </nav>
+
+      <menu class="context-menu" id="desktop-context-menu" hidden>
+        <button type="button" data-context-action="new-folder">New Folder</button>
+        <button type="button" data-context-action="wallpaper-aurora">Aurora Wallpaper</button>
+        <button type="button" data-context-action="wallpaper-midnight">Midnight Wallpaper</button>
+        <button type="button" data-context-action="wallpaper-sunrise">Sunrise Wallpaper</button>
+      </menu>
     </main>
 
     <script src="./app.js"></script>
